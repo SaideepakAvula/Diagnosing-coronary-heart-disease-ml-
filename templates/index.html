@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIAGNOSING CORONARY ARTERY DISEASE</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Shared Body Styles */
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background: url('https://img.freepik.com/premium-photo/heart-patient_693425-28088.jpg') no-repeat;
+            background-size: cover;
+            color: #171414;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            min-height: 100vh; /* Ensure full viewport height */
+            padding: 20px; /* Add padding for better spacing */
+        }
+
+        /* Overlay to darken the background for better readability */
+        .container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .upload-container {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #000000;
+            height:300px;
+            width: 600px;
+            max-width: 100%;
+            max-height: 100%; /* Ensure it doesn't exceed viewport width */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-top: 100px; /* Move container to the vertical center */
+            margin-bottom:220px; 
+            margin-left: 130px;
+            margin-right: 140px;/* Move container to the vertical center */
+        }
+
+        .upload-container h1 {
+            margin-bottom: 20px;
+            color: #0d0e0d; 
+            font-size: 24px; /* Adjusted font size */
+        }
+
+        .upload-container h2 {
+            margin-bottom: 20px;
+            color: #000000; 
+            font-size: 20px; /* Adjusted font size */
+        }
+
+        .upload-container input[type="file"] {
+            display: block;
+            margin: 0 auto 10px auto;
+        }
+
+        .upload-container input[type="submit"], 
+        .upload-container input[type="button"] {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .upload-container input[type="submit"]:hover, 
+        .upload-container input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* Prediction Result Styles */
+        #result-container {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .result-positive {
+            color: red;
+        }
+
+        .result-negative {
+            color: blue;
+        }
+
+        /* Animation Styles */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .container h1 {
+            font-size: 3em; /* Increase the size of the main heading */
+            color: orange; /* Change heading color to orange */
+            margin-top: 0; /* Remove default margin */
+        }
+    </style>
+
+</head>
+<body>
+    
+    <!-- Background Image Scroll Effect Section -->
+    <section id="bg-image-scroll-effect">
+        <center>
+            <h1>DIAGNOSING CORONARY ARTERY DISEASE </h1>
+        </center>
+            
+        <!-- File Upload Form -->
+        <div class="upload-container">
+            <h1>UPLOAD YOUR ECG</h1>
+            <form id="upload-form" action="/predict" method="post" enctype="multipart/form-data">
+                <input type="file" name="image" id="image-input" accept=".jpg, .jpeg, .png">
+                <input type="button" id="submit-button" value="submit" onclick="predictImage()">
+            </form>
+            <h2>Result:</h2>
+            <div id="result-container">
+                <!-- Prediction result will be displayed here -->
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const codeText = document.getElementById('codeText');
+            const text = `function helloWorld() {
+    console.log("Hello, World!");
+}
+
+helloWorld();`;
+
+            let index = 0;
+
+            function typeWriter() {
+                if (index < text.length) {
+                    codeText.innerHTML += text.charAt(index);
+                    index++;
+                    setTimeout(typeWriter, 50);
+                }
+            }
+
+            typeWriter();
+        });
+
+        function predictImage() {
+            var form = document.getElementById('upload-form');
+            var formData = new FormData(form);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Prediction error:', data.error);
+                    document.getElementById('result-container').innerText = 'Error predicting: ' + data.error;
+                } else {
+                    var result = data.predicted_disease;
+                    var resultText = '';
+                    var resultClass = '';
+                    switch(result) {
+                        case 0:
+                            resultText = 'Abnormal Heartbeat';
+                            resultClass = 'result-positive';
+                            break;
+                        case 1:
+                            resultText = 'History of MI';
+                            resultClass = 'result-positive';
+                            break;
+                        case 2:
+                            resultText = 'Myocardial Infarction ';
+                            resultClass = 'result-positive';
+                            break;
+                        case 3:
+                            resultText = 'No need to worry, your heart is good';
+                            resultClass = 'result-negative';
+                            break;
+                        default:
+                            resultText = 'Unknown prediction result';
+                            resultClass = '';
+                    }
+                    var resultContainer = document.getElementById('result-container');
+                    resultContainer.innerText = resultText;
+                    resultContainer.className = resultClass; // Reset class first
+                    resultContainer.classList.add('fade-in');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result-container').innerText = 'Error predicting: ' + error;
+            });
+        }
+    </script>
+
+</body>
+</html>

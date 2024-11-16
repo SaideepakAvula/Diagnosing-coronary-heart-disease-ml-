@@ -1,0 +1,6 @@
+flask
+requests
+pandas
+joblib
+pillow
+scikit-learn
