@@ -36,12 +36,24 @@ CHD detection often relies on manual interpretation of ECG data, which can be ti
 ![Screenshot 2024-07-05 210439](https://github.com/user-attachments/assets/615214d0-f086-461b-8953-bca38086f117)
 💻 This project is a step toward leveraging AI to make
 
-⚡ Tech Stack Used:
-Programming:
+⚡Tech Stack Used
+
+🔹 Programming:
+
 Python
 
-Libraries:
-NumPy, OpenCV, Scikit-learn
+🔹 Libraries:
 
-Database:
+NumPy
+
+OpenCV
+
+Scikit-learn
+
+TensorFlow
+
+PyTorch
+
+🔹 Database:
+
 Microsoft SQL Server
